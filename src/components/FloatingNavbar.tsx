@@ -1,10 +1,12 @@
 "use client"
 
-import { LogOut, User, Wallet } from "lucide-react";
+import { Bot, FileText, GraduationCap, Key, LogOut, Radio, Shield, Sparkles, TrendingUp, User, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ConfirmationDialog from "./ui/confirmation-dialog";
+import { Dropdown } from "./ui/dropdown";
+import { useToast } from "./ui/toast";
 
 interface UserProfile {
     name: string;
@@ -14,6 +16,7 @@ interface UserProfile {
 
 export default function FloatingNavbar() {
     const router = useRouter()
+    const { showToast } = useToast()
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
@@ -76,73 +79,123 @@ export default function FloatingNavbar() {
         setShowLogoutConfirm(true)
     }
 
+    const handleComingSoonClick = (featureName: string) => {
+        showToast(`Fitur ${featureName} sedang dalam pengembangan dan akan segera hadir!`, 'info')
+    }
+
     return (
         <>
             <header className="fixed top-4 left-4 right-4 z-50 border border-slate-700 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-2xl">
-            <div className="container mx-auto px-6 py-4">
-                <div className="flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-bold text-white hover:text-pink-400 transition-colors">
-                        Eksportal
-                    </Link>
-                    <div className="flex items-center gap-6">
-                        <nav className="flex gap-6">
-                            <Link href="/chatbot" className="text-slate-300 hover:text-pink-400 transition-colors">
-                                Asisten AI
-                            </Link>
-                            <Link href="/api-docs" className="text-slate-300 hover:text-pink-400 transition-colors">
-                                Dokumentasi API
-                            </Link>
-                            {isLoggedIn && (
-                                <Link href="/api-keys" className="text-slate-300 hover:text-pink-400 transition-colors">
-                                    API Keys
-                                </Link>
-                            )}
-                            {isLoggedIn && userProfile?.is_staff && (
-                                <Link href="/admin" className="text-slate-300 hover:text-orange-400 transition-colors">
-                                    Admin
-                                </Link>
-                            )}
-                        </nav>
-
-                        {isLoggedIn && userProfile ? (
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2">
-                                    <Wallet className="h-4 w-4 text-green-400" />
-                                    <span className="text-slate-300 text-sm">Rp {userProfile.saldo.toLocaleString('id-ID')}</span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2">
-                                    <User className="h-4 w-4 text-pink-400" />
-                                    <span className="text-slate-300 text-sm">{userProfile.name}</span>
-                                </div>
-                                <button 
-                                    onClick={handleLogoutClick}
-                                    className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                <div className="container mx-auto px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <Link href="/" className="text-2xl font-bold text-white hover:text-pink-400 transition-colors">
+                            Eksportal
+                        </Link>
+                        <div className="flex items-center gap-6">
+                            <nav className="flex gap-6">
+                                <Dropdown
+                                    className="-mr-4"
+                                    trigger={
+                                        <span className="text-slate-300 hover:text-pink-400 transition-colors flex items-center gap-2 text-sm">
+                                            <Sparkles className="h-4 w-4" />
+                                            Fitur Baru
+                                        </span>
+                                    }
                                 >
-                                    <LogOut className="h-4 w-4" />
-                                    Keluar
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-4">
-                                <Link href="/login" className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors">
-                                    Masuk
+                                    <button
+                                        onClick={() => handleComingSoonClick('Simulasi Rute Perdagangan')}
+                                        className="w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-pink-400 transition-colors flex items-center gap-3"
+                                    >
+                                        <TrendingUp className="h-4 w-4" />
+                                        <div>
+                                            <div className="font-medium">Rute Perdagangan</div>
+                                            <div className="text-xs text-slate-400">Simulasi jalur ekspor optimal</div>
+                                        </div>
+                                    </button>
+                                    <button
+                                        onClick={() => handleComingSoonClick('Info Perdagangan Terbaru')}
+                                        className="w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-pink-400 transition-colors flex items-center gap-3"
+                                    >
+                                        <Radio className="h-4 w-4" />
+                                        <div>
+                                            <div className="font-medium">Info Perdagangan</div>
+                                            <div className="text-xs text-slate-400">Berita & update terkini</div>
+                                        </div>
+                                    </button>
+                                    <button
+                                        onClick={() => handleComingSoonClick('Blog Edukasi berbasis AI')}
+                                        className="w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-pink-400 transition-colors flex items-center gap-3"
+                                    >
+                                        <GraduationCap className="h-4 w-4" />
+                                        <div>
+                                            <div className="font-medium">Blog Edukasi</div>
+                                            <div className="text-xs text-slate-400">Panduan berbasis AI</div>
+                                        </div>
+                                    </button>
+                                </Dropdown>
+
+                                <Link href="/chatbot" className="text-slate-300 hover:text-pink-400 transition-colors flex items-center gap-2 text-sm">
+                                    <Bot className="h-4 w-4" />
+                                    Asisten AI
                                 </Link>
-                            </div>
-                        )}
+                                <Link href="/api-docs" className="text-slate-300 hover:text-pink-400 transition-colors flex items-center gap-2 text-sm">
+                                    <FileText className="h-4 w-4" />
+                                    Dokumentasi API
+                                </Link>
+                                {isLoggedIn && (
+                                    <Link href="/api-keys" className="text-slate-300 hover:text-pink-400 transition-colors flex items-center gap-2 text-sm">
+                                        <Key className="h-4 w-4" />
+                                        API Keys
+                                    </Link>
+                                )}
+
+                                {isLoggedIn && userProfile?.is_staff && (
+                                    <Link href="/admin" className="text-slate-300 hover:text-orange-400 transition-colors flex items-center gap-2 text-sm">
+                                        <Shield className="h-4 w-4" />
+                                        Admin
+                                    </Link>
+                                )}
+                            </nav>
+
+                            {isLoggedIn && userProfile ? (
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2">
+                                        <Wallet className="h-4 w-4 text-green-400" />
+                                        <span className="text-slate-300 text-sm">Rp{userProfile.saldo.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2">
+                                        <User className="h-4 w-4 text-pink-400" />
+                                        <span className="text-slate-300 text-sm">{userProfile.name}</span>
+                                    </div>
+                                    <button
+                                        onClick={handleLogoutClick}
+                                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        Keluar
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-4">
+                                    <Link href="/login" className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                        Masuk
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </header>
+            </header>
 
-        <ConfirmationDialog
-            isOpen={showLogoutConfirm}
-            onClose={() => setShowLogoutConfirm(false)}
-            onConfirm={handleLogout}
-            title="Konfirmasi Keluar"
-            description="Apakah Anda yakin ingin keluar dari akun?"
-            confirmText="Keluar"
-            cancelText="Batal"
-        />
+            <ConfirmationDialog
+                isOpen={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={handleLogout}
+                title="Konfirmasi Keluar"
+                description="Apakah Anda yakin ingin keluar dari akun?"
+                confirmText="Keluar"
+                cancelText="Batal"
+            />
         </>
     )
 }
