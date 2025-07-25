@@ -4,6 +4,7 @@ import { LogOut, User, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import ConfirmationDialog from "./ui/confirmation-dialog";
 
 interface UserProfile {
     name: string;
@@ -14,6 +15,7 @@ export default function FloatingNavbar() {
     const router = useRouter()
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -61,11 +63,17 @@ export default function FloatingNavbar() {
         localStorage.removeItem('token')
         setUserProfile(null)
         setIsLoggedIn(false)
+        setShowLogoutConfirm(false)
         router.push('/login')
     }
 
+    const handleLogoutClick = () => {
+        setShowLogoutConfirm(true)
+    }
+
     return (
-        <header className="fixed top-4 left-4 right-4 z-50 border border-slate-700 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-2xl">
+        <>
+            <header className="fixed top-4 left-4 right-4 z-50 border border-slate-700 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-2xl">
             <div className="container mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     <Link href="/" className="text-2xl font-bold text-white hover:text-pink-400 transition-colors">
@@ -97,7 +105,7 @@ export default function FloatingNavbar() {
                                     <span className="text-slate-300 text-sm">{userProfile.name}</span>
                                 </div>
                                 <button 
-                                    onClick={handleLogout}
+                                    onClick={handleLogoutClick}
                                     className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
                                 >
                                     <LogOut className="h-4 w-4" />
@@ -115,5 +123,16 @@ export default function FloatingNavbar() {
                 </div>
             </div>
         </header>
+
+        <ConfirmationDialog
+            isOpen={showLogoutConfirm}
+            onClose={() => setShowLogoutConfirm(false)}
+            onConfirm={handleLogout}
+            title="Konfirmasi Keluar"
+            description="Apakah Anda yakin ingin keluar dari akun?"
+            confirmText="Keluar"
+            cancelText="Batal"
+        />
+        </>
     )
 }

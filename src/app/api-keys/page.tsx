@@ -1,20 +1,10 @@
 "use client"
 
 import FloatingNavbar from "@/components/FloatingNavbar"
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import ConfirmationDialog from "@/components/ui/confirmation-dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AuthManager } from "@/lib/auth"
@@ -43,6 +33,11 @@ export default function ApiKeysPage() {
     const [isTopUpOpen, setIsTopUpOpen] = useState(false)
     const [isTopingUp, setIsTopingUp] = useState(false)
     const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set())
+    const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; keyName: string; keyDisplayName: string }>({
+        isOpen: false,
+        keyName: "",
+        keyDisplayName: ""
+    })
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -135,6 +130,7 @@ export default function ApiKeysPage() {
             if (response.ok) {
                 setSuccess("API key berhasil dihapus!")
                 fetchApiKeys()
+                setDeleteConfirm({ isOpen: false, keyName: "", keyDisplayName: "" })
             } else {
                 const errorData = await response.json()
                 setError(errorData.message || "Gagal menghapus API key")
@@ -142,6 +138,14 @@ export default function ApiKeysPage() {
         } catch (err) {
             setError("Terjadi kesalahan saat menghapus API key")
         }
+    }
+
+    const handleDeleteClick = (keyName: string, keyDisplayName: string) => {
+        setDeleteConfirm({
+            isOpen: true,
+            keyName: keyName,
+            keyDisplayName: keyDisplayName
+        })
     }
 
     const copyToClipboard = (text: string) => {
@@ -182,7 +186,6 @@ export default function ApiKeysPage() {
                 setSuccess(`Berhasil top up saldo sebesar Rp ${amount.toLocaleString('id-ID')}!`)
                 setIsTopUpOpen(false)
                 
-                // Trigger refresh profile
                 window.dispatchEvent(new CustomEvent('refreshProfile'))
             } else {
                 const errorData = await response.json()
@@ -338,39 +341,14 @@ export default function ApiKeysPage() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </Button>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent className="bg-slate-800 border-slate-700">
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle className="text-white">
-                                                                Hapus API Key
-                                                            </AlertDialogTitle>
-                                                            <AlertDialogDescription className="text-slate-300">
-                                                                Apakah Anda yakin ingin menghapus API key "{apiKey.name}"?
-                                                                Tindakan ini tidak dapat dibatalkan.
-                                                            </AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel className="bg-slate-700 text-slate-300 hover:bg-slate-600">
-                                                                Batal
-                                                            </AlertDialogCancel>
-                                                            <AlertDialogAction
-                                                                onClick={() => deleteApiKey(apiKey.name)}
-                                                                className="bg-red-600 hover:bg-red-700 text-white"
-                                                            >
-                                                                Hapus
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => handleDeleteClick(apiKey.name, apiKey.name)}
+                                                    className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
                                             </div>
                                             
                                             <div className="space-y-2">
@@ -463,6 +441,17 @@ export default function ApiKeysPage() {
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmationDialog
+                isOpen={deleteConfirm.isOpen}
+                onClose={() => setDeleteConfirm({ isOpen: false, keyName: "", keyDisplayName: "" })}
+                onConfirm={() => deleteApiKey(deleteConfirm.keyName)}
+                title="Hapus API Key"
+                description={`Apakah Anda yakin ingin menghapus API key "${deleteConfirm.keyDisplayName}"? Tindakan ini tidak dapat dibatalkan.`}
+                confirmText="Hapus"
+                cancelText="Batal"
+            />
         </div>
     )
 }
