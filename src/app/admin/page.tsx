@@ -9,14 +9,7 @@ import { Label } from "@/components/ui/label"
 import { AuthManager } from "@/lib/auth"
 import { DollarSign, Loader2, Settings, Shield } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-
-interface UserProfile {
-    name: string;
-    email: string;
-    saldo: number;
-    is_staff: boolean;
-}
+import { useCallback, useEffect, useState } from "react"
 
 interface PricingData {
     current_price: number;
@@ -27,7 +20,6 @@ interface PricingData {
 
 export default function AdminPage() {
     const router = useRouter()
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [isAuthorized, setIsAuthorized] = useState(false)
     const [currentPricing, setCurrentPricing] = useState<PricingData | null>(null)
@@ -38,11 +30,24 @@ export default function AdminPage() {
     const [success, setSuccess] = useState("")
     const [showUpdateConfirm, setShowUpdateConfirm] = useState(false)
 
-    useEffect(() => {
-        checkAuthAndFetchData()
-    }, [router])
+    const fetchCurrentPricing = useCallback(async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/pricing/`)
+            
+            if (response.ok) {
+                const data = await response.json()
+                setCurrentPricing(data.data)
+                setNewPrice(data.data?.current_price?.toString() || "")
+                setNewDescription(data.data?.description || "")
+            } else {
+                setError("Gagal memuat pricing saat ini")
+            }
+        } catch {
+            setError("Terjadi kesalahan saat memuat pricing")
+        }
+    }, [])
 
-    const checkAuthAndFetchData = async () => {
+    const checkAuthAndFetchData = useCallback(async () => {
         const token = localStorage.getItem('token')
         const isStaffFromStorage = localStorage.getItem('is_staff')
         
@@ -75,7 +80,6 @@ export default function AdminPage() {
                     saldo: profileData.data?.saldo || 0,
                     is_staff: profileData.data?.is_staff || false
                 }
-                setUserProfile(profile)
 
                 localStorage.setItem('is_staff', profile.is_staff.toString())
 
@@ -90,30 +94,17 @@ export default function AdminPage() {
             } else {
                 router.push('/login')
             }
-        } catch (err) {
-            console.error('Auth check failed:', err)
+        } catch {
+            console.error('Auth check failed')
             router.push('/login')
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [router, fetchCurrentPricing])
 
-    const fetchCurrentPricing = async () => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/pricing/`)
-            
-            if (response.ok) {
-                const data = await response.json()
-                setCurrentPricing(data.data)
-                setNewPrice(data.data?.current_price?.toString() || "")
-                setNewDescription(data.data?.description || "")
-            } else {
-                setError("Gagal memuat pricing saat ini")
-            }
-        } catch (err) {
-            setError("Terjadi kesalahan saat memuat pricing")
-        }
-    }
+    useEffect(() => {
+        checkAuthAndFetchData()
+    }, [checkAuthAndFetchData])
 
     const handleUpdatePricing = async () => {
         if (!newPrice.trim() || !newDescription.trim()) {
@@ -147,7 +138,7 @@ export default function AdminPage() {
                 const errorData = await response.json()
                 setError(errorData.message || "Gagal memperbarui pricing")
             }
-        } catch (err) {
+        } catch {
             setError("Terjadi kesalahan saat memperbarui pricing")
         } finally {
             setIsUpdating(false)
