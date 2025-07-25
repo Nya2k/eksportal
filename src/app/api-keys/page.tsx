@@ -17,7 +17,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Calendar, Clock, Copy, Key, Plus, Trash2, Wallet } from "lucide-react"
+import { AuthManager } from "@/lib/auth"
+import { Calendar, Clock, Copy, Eye, EyeOff, Key, Plus, Trash2, Wallet } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -41,6 +42,7 @@ export default function ApiKeysPage() {
     const [isPricingLoading, setIsPricingLoading] = useState(true)
     const [isTopUpOpen, setIsTopUpOpen] = useState(false)
     const [isTopingUp, setIsTopingUp] = useState(false)
+    const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set())
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -74,13 +76,7 @@ export default function ApiKeysPage() {
 
     const fetchApiKeys = async () => {
         try {
-            const token = localStorage.getItem('token')
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/keys/all/`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            })
+            const response = await AuthManager.apiRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/keys/all/`)
 
             if (response.ok) {
                 const data = await response.json()
@@ -105,13 +101,8 @@ export default function ApiKeysPage() {
         setError("")
         
         try {
-            const token = localStorage.getItem('token')
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/keys/register/`, {
+            const response = await AuthManager.apiRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/keys/register/`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     name: newKeyName.trim()
                 }),
@@ -134,13 +125,8 @@ export default function ApiKeysPage() {
 
     const deleteApiKey = async (keyName: string) => {
         try {
-            const token = localStorage.getItem('token')
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/keys/delete/`, {
+            const response = await AuthManager.apiRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/chatbot/keys/delete/`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     name: keyName
                 }),
@@ -163,18 +149,29 @@ export default function ApiKeysPage() {
         setSuccess("API key berhasil disalin!")
     }
 
+    const toggleKeyVisibility = (keyId: string) => {
+        setVisibleKeys(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(keyId)) {
+                newSet.delete(keyId)
+            } else {
+                newSet.add(keyId)
+            }
+            return newSet
+        })
+    }
+
+    const maskApiKey = (key: string) => {
+        return '•'.repeat(Math.max(key.length - 8, 40))
+    }
+
     const topUpSaldo = async (amount: number) => {
         setIsTopingUp(true)
         setError("")
         
         try {
-            const token = localStorage.getItem('token')
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/saldo/topup/`, {
+            const response = await AuthManager.apiRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/saldo/topup/`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     amount: amount
                 }),
@@ -357,7 +354,7 @@ export default function ApiKeysPage() {
                                                                 Hapus API Key
                                                             </AlertDialogTitle>
                                                             <AlertDialogDescription className="text-slate-300">
-                                                                Apakah Anda yakin ingin menghapus API key "{apiKey.name}"? 
+                                                                Apakah Anda yakin ingin menghapus API key "{apiKey.name}"?
                                                                 Tindakan ini tidak dapat dibatalkan.
                                                             </AlertDialogDescription>
                                                         </AlertDialogHeader>
@@ -381,15 +378,25 @@ export default function ApiKeysPage() {
                                                     <Label className="text-slate-400 text-sm">API Key</Label>
                                                     <div className="flex gap-2 mt-1">
                                                         <Input
-                                                            value={apiKey.key}
+                                                            value={visibleKeys.has(apiKey.id) ? apiKey.key : maskApiKey(apiKey.key)}
                                                             readOnly
                                                             className="bg-slate-600 border-slate-500 text-slate-300 font-mono text-sm"
                                                         />
                                                         <Button
                                                             size="sm"
                                                             variant="outline"
+                                                            onClick={() => toggleKeyVisibility(apiKey.id)}
+                                                            className="border-slate-600 text-slate-500 hover:bg-slate-700"
+                                                            title={visibleKeys.has(apiKey.id) ? "Sembunyikan API Key" : "Tampilkan API Key"}
+                                                        >
+                                                            {visibleKeys.has(apiKey.id) ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
                                                             onClick={() => copyToClipboard(apiKey.key)}
                                                             className="border-slate-600 text-slate-500 hover:bg-slate-700"
+                                                            title="Salin API Key"
                                                         >
                                                             <Copy className="h-4 w-4" />
                                                         </Button>
