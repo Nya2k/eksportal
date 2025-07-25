@@ -285,7 +285,7 @@ export default function ApiDocsPage() {
   -H 'Content-Type: multipart/form-data' \\
   -F 'question=Apa itu ekspor barang?' \\
   -F 'file='`, "curl1")}
-                                                    className="border-slate-600 text-slate-400 hover:bg-slate-700"
+                                                    className="border-slate-600 text-slate-500 hover:bg-slate-700"
                                                 >
                                                     <Copy className="h-3 w-3 mr-1" />
                                                     {copiedText === "curl1" ? "Disalin!" : "Salin"}

@@ -110,10 +110,7 @@ export default function RegisterPage() {
                             <div className="mx-auto w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mb-4">
                                 <UserPlus className="h-6 w-6 text-white" />
                             </div>
-                            <CardTitle className="text-2xl text-white">Buat Akun Baru</CardTitle>
-                            <CardDescription className="text-slate-300">
-                                Bergabunglah dengan ribuan UMKM Indonesia yang sudah menggunakan Eksportal
-                            </CardDescription>
+                            <CardTitle className="text-2xl text-white">Buat Akun</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <form onSubmit={handleSubmit} className="space-y-4">

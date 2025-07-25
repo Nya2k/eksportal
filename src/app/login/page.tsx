@@ -84,7 +84,7 @@ export default function LoginPage() {
                             </div>
                             <CardTitle className="text-2xl text-white">Masuk ke Akun</CardTitle>
                             <CardDescription className="text-slate-300">
-                                Selamat datang kembali! Masuk untuk melanjutkan perjalanan ekspor Anda
+                                Selamat datang kembali!<br />Masuk untuk melanjutkan perjalanan ekspor Anda
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
