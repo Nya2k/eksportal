@@ -89,7 +89,7 @@ export default function ApiDocsPage() {
                                     Kelola API Key
                                 </CardTitle>
                                 <CardDescription className="text-slate-300">
-                                    Buat dan kelola API key Anda untuk mengakses layanan Eksportal.
+                                    Buat dan kelola API key Anda untuk mengintegrasikan layanan Eksportal.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -285,7 +285,7 @@ export default function ApiDocsPage() {
   -H 'Content-Type: multipart/form-data' \\
   -F 'question=Apa itu ekspor barang?' \\
   -F 'file='`, "curl1")}
-                                                    className="border-slate-600 text-slate-500 hover:bg-slate-700"
+                                                    className="border-slate-600 text-slate-500 hover:bg-slate-700 hover:text-white"
                                                 >
                                                     <Copy className="h-3 w-3 mr-1" />
                                                     {copiedText === "curl1" ? "Disalin!" : "Salin"}
