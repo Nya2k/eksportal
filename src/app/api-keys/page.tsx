@@ -29,6 +29,7 @@ export default function ApiKeysPage() {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [pricing, setPricing] = useState<number | null>(null)
+    const [pricingDescription, setPricingDescription] = useState<string>("")
     const [isPricingLoading, setIsPricingLoading] = useState(true)
     const [isTopUpOpen, setIsTopUpOpen] = useState(false)
     const [isTopingUp, setIsTopingUp] = useState(false)
@@ -57,13 +58,16 @@ export default function ApiKeysPage() {
             if (response.ok) {
                 const data = await response.json()
                 setPricing(data.data?.current_price || 0)
+                setPricingDescription(data.data?.description || "")
             } else {
                 console.error("Failed to fetch pricing")
                 setPricing(0)
+                setPricingDescription("")
             }
         } catch (err) {
             console.error("Error fetching pricing:", err)
             setPricing(0)
+            setPricingDescription("")
         } finally {
             setIsPricingLoading(false)
         }
@@ -241,8 +245,15 @@ export default function ApiKeysPage() {
                             Setiap hit API dikenakan biaya {isPricingLoading ? (
                                 <span className="text-slate-400">Loading...</span>
                             ) : (
-                                <span className="font-bold text-blue-400">Rp {pricing?.toLocaleString('id-ID')}</span>
+                                <span className="font-bold text-blue-400">Rp{pricing?.toLocaleString('id-ID')}</span>
                             )} per request.
+                            {!isPricingLoading && pricingDescription && (
+                                <>
+                                    <br />
+                                    <span className="text-slate-400 italic">{pricingDescription}</span>
+                                </>
+                            )}
+                            <br />
                             Pastikan untuk memantau penggunaan API key Anda.
                         </p>
                     </div>
