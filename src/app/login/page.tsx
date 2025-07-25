@@ -143,12 +143,6 @@ export default function LoginPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-end">
-                                    <Link href="/forgot-password" className="text-pink-400 hover:text-pink-300 text-sm transition-colors">
-                                        Lupa kata sandi?
-                                    </Link>
-                                </div>
-
                                 <Button
                                     type="submit"
                                     className="w-full bg-pink-600 hover:bg-pink-700 text-white"

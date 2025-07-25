@@ -48,7 +48,7 @@ export default function HomePage() {
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">Eksportal</h1>
           <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
             Platform untuk membantu UMKM Indonesia menemukan peluang ekspor, regulasi, dan tren pasar
-            dengan panduan cerdas dan otomatisasi yang mudah digunakan.
+            dengan panduan cerdas dan otomatisasi yang mudah digunakan
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/chatbot">
