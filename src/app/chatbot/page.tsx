@@ -91,7 +91,7 @@ export default function ChatbotPage() {
                                         1
                                     </div>
                                     <h3 className="text-white font-semibold mb-2">Klik Tombol</h3>
-                                    <p className="text-slate-300 text-sm">Klik "Mulai Chat di Telegram" untuk membuka bot kami</p>
+                                    <p className="text-slate-300 text-sm">Klik &quot;Mulai Chat di Telegram&quot; untuk membuka bot kami</p>
                                 </div>
                                 <div className="text-center">
                                     <div className="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-lg">
@@ -120,7 +120,7 @@ export default function ChatbotPage() {
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-slate-300">"Apa saja persyaratan ekspor produk kelapa ke Belanda?"</p>
+                                    <p className="text-slate-300">&quot;Apa saja persyaratan ekspor produk kelapa ke Belanda?&quot;</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -128,7 +128,7 @@ export default function ChatbotPage() {
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-slate-300">"Produk apa yang sedang populer diekspor ke Amerika Serikat?"</p>
+                                    <p className="text-slate-300">&quot;Produk apa yang sedang populer diekspor ke Amerika Serikat?&quot;</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -136,7 +136,7 @@ export default function ChatbotPage() {
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-slate-300">"Apa itu kode HS 6109 dan potensi ekspornya?"</p>
+                                    <p className="text-slate-300">&quot;Apa itu kode HS 6109 dan potensi ekspornya?&quot;</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -144,7 +144,7 @@ export default function ChatbotPage() {
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-3">
                                     <div className="w-2 h-2 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <p className="text-slate-300">"Bagaimana cara mendapatkan sertifikat halal untuk ekspor makanan?"</p>
+                                    <p className="text-slate-300">&quot;Bagaimana cara mendapatkan sertifikat halal untuk ekspor makanan?&quot;</p>
                                 </div>
                             </CardContent>
                         </Card>

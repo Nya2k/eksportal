@@ -83,7 +83,7 @@ export default function ApiKeysPage() {
             } else {
                 setError("Gagal memuat API keys")
             }
-        } catch (err) {
+        } catch {
             setError("Terjadi kesalahan saat memuat data")
         } finally {
             setIsLoading(false)
@@ -115,7 +115,7 @@ export default function ApiKeysPage() {
                 const errorData = await response.json()
                 setError(errorData.message || "Gagal membuat API key")
             }
-        } catch (err) {
+        } catch {
             setError("Terjadi kesalahan saat membuat API key")
         } finally {
             setIsCreating(false)
@@ -139,7 +139,7 @@ export default function ApiKeysPage() {
                 const errorData = await response.json()
                 setError(errorData.message || "Gagal menghapus API key")
             }
-        } catch (err) {
+        } catch {
             setError("Terjadi kesalahan saat menghapus API key")
         }
     }
@@ -186,7 +186,7 @@ export default function ApiKeysPage() {
             })
 
             if (response.ok) {
-                const data = await response.json()
+                await response.json()
                 setSuccess(`Berhasil top up saldo sebesar Rp ${amount.toLocaleString('id-ID')}!`)
                 setIsTopUpOpen(false)
                 
@@ -195,7 +195,7 @@ export default function ApiKeysPage() {
                 const errorData = await response.json()
                 setError(errorData.message || "Gagal melakukan top up")
             }
-        } catch (err) {
+        } catch {
             setError("Terjadi kesalahan saat top up saldo")
         } finally {
             setIsTopingUp(false)
