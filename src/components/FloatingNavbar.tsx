@@ -9,6 +9,7 @@ import ConfirmationDialog from "./ui/confirmation-dialog";
 interface UserProfile {
     name: string;
     saldo: number;
+    is_staff: boolean;
 }
 
 export default function FloatingNavbar() {
@@ -32,11 +33,14 @@ export default function FloatingNavbar() {
 
                 if (response.ok) {
                     const data = await response.json()
-                    setUserProfile({
+                    const profileData = {
                         name: data.data?.name || "",
-                        saldo: data.data?.saldo || 0
-                    })
+                        saldo: data.data?.saldo || 0,
+                        is_staff: data.data?.is_staff || false
+                    }
+                    setUserProfile(profileData)
                     setIsLoggedIn(true)
+                    localStorage.setItem('is_staff', profileData.is_staff.toString())
                 } else {
                     const errorText = await response.text()
                     console.error("Error response:", errorText)
@@ -61,6 +65,7 @@ export default function FloatingNavbar() {
 
     const handleLogout = () => {
         localStorage.removeItem('token')
+        localStorage.removeItem('is_staff')
         setUserProfile(null)
         setIsLoggedIn(false)
         setShowLogoutConfirm(false)
@@ -87,6 +92,11 @@ export default function FloatingNavbar() {
                             {isLoggedIn && (
                                 <Link href="/api-keys" className="text-slate-300 hover:text-pink-400 transition-colors">
                                     API Keys
+                                </Link>
+                            )}
+                            {isLoggedIn && userProfile?.is_staff && (
+                                <Link href="/admin" className="text-slate-300 hover:text-orange-400 transition-colors">
+                                    Admin
                                 </Link>
                             )}
                             <Link href="/chatbot" className="text-slate-300 hover:text-pink-400 transition-colors">
