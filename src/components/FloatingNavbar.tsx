@@ -86,6 +86,9 @@ export default function FloatingNavbar() {
                     </Link>
                     <div className="flex items-center gap-6">
                         <nav className="flex gap-6">
+                            <Link href="/chatbot" className="text-slate-300 hover:text-pink-400 transition-colors">
+                                Asisten AI
+                            </Link>
                             <Link href="/api-docs" className="text-slate-300 hover:text-pink-400 transition-colors">
                                 Dokumentasi API
                             </Link>
@@ -99,9 +102,6 @@ export default function FloatingNavbar() {
                                     Admin
                                 </Link>
                             )}
-                            <Link href="/chatbot" className="text-slate-300 hover:text-pink-400 transition-colors">
-                                Asisten AI
-                            </Link>
                         </nav>
 
                         {isLoggedIn && userProfile ? (

@@ -70,7 +70,7 @@ export default function HomePage() {
       </section>
 
       {/* Popular HS Codes Section */}
-      <section className="py-16 px-4">
+      <section className="py-14 px-4">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-white mb-8 text-center">Produk Ekspor Unggulan Indonesia</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,7 +97,7 @@ export default function HomePage() {
       </section>
 
       {/* Export Information Section */}
-      <section className="py-16 px-4 bg-slate-800/30">
+      <section className="py-10 px-4 bg-slate-800/30">
         <div className="container mx-auto">
           <h2 className="text-3xl font-bold text-white mb-8 text-center">Panduan Ekspor Terpadu</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -119,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4">
+      <section className="py-14 px-4">
         <div className="container mx-auto text-center">
           <Card className="bg-gradient-to-r from-pink-600/20 to-slate-800/50 border-pink-600/30 max-w-4xl mx-auto">
             <CardHeader>

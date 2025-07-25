@@ -4,8 +4,6 @@ import FloatingNavbar from "@/components/FloatingNavbar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Code, Copy, Key } from "lucide-react"
 import Link from "next/link"
@@ -15,18 +13,45 @@ const endpoints = [
     {
         method: "POST",
         endpoint: "/api/chatbot/ask/",
-        description: "Kirim pesan ke chatbot ekspor",
         parameters: [
-            { name: "name", type: "string", required: true, description: "Prompt dari pengguna" },
+            { name: "question", type: "string", required: true, description: "Pertanyaan yang akan ditanyakan ke chatbot", example: "Apa itu ekspor barang?" },
+            { name: "file", type: "string($binary)", required: false, description: "Upload file opsional (hanya PNG, JPG, JPEG, PDF)", example: "file.pdf" },
         ],
         headers: [
-            { name: "X-API-KEY", type: "string", required: true, description: "API Key yang didapat dari register key di web" }
-        ]
+            { name: "X-API-KEY", type: "string", required: true, description: "API Key yang didapat dari register key di web" },
+            { name: "Content-Type", type: "string", required: true, description: "multipart/form-data untuk upload file" }
+        ],
+        requestExample: {
+            type: "multipart/form-data",
+            fields: {
+                question: "Apa itu ekspor barang?",
+                file: "(binary file data)"
+            }
+        },
+        responseExample: {
+            status: 200,
+            message: "Success",
+            timestamp: "2025-07-26T01:54:50.230367+07:00",
+            data: {
+                response: {
+                    output: "Ekspor barang adalah kegiatan mengeluarkan barang dari daerah pabean Indonesia ke luar negeri.\\n\\nDalam peraturan Indonesia, ekspor barang berarti aktivitas pengiriman atau penjualan barang dari wilayah Indonesia ke negara lain dengan memenuhi persyaratan dan ketentuan yang berlaku, seperti prosedur kepabeanan dan dokumen ekspor.\\n\\nPelaku ekspor disebut *eksportir* dan harus memenuhi syarat dokumen ekspor, seperti:\\n- Pemberitahuan Ekspor Barang\\n- dokumen pelengkap lain\\n\\nKegiatan ekspor diawasi oleh pemerintah, misalnya Kementerian Perdagangan, dengan tujuan:\\n- mendukung perdagangan internasional\\n- menambah devisa negara\\n- menjaga pertumbuhan ekonomi"
+                },
+                saldo_info: "Saldo berhasil dipotong 2500. Sisa saldo: 32500",
+                webhook_success: true
+            }
+        }
     },
 ];
 
 export default function ApiDocsPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [copiedText, setCopiedText] = useState("")
+
+    const copyToClipboard = (text: string, type: string) => {
+        navigator.clipboard.writeText(text)
+        setCopiedText(type)
+        setTimeout(() => setCopiedText(""), 2000)
+    }
 
     useEffect(() => {
         const checkAuth = () => {
@@ -124,7 +149,7 @@ export default function ApiDocsPage() {
                                         <div>
                                             <h4 className="text-white font-semibold mb-2">Format Respons</h4>
                                             <p className="text-slate-300 text-sm">
-                                                Respons dikembalikan dalam format JSON dengan struktur yang konsisten
+                                                Respons dikembalikan dalam format JSON
                                             </p>
                                         </div>
                                     </CardContent>
@@ -144,7 +169,6 @@ export default function ApiDocsPage() {
                                                 </Badge>
                                                 <code className="text-pink-400 text-sm">{endpoint.endpoint}</code>
                                             </div>
-                                            <CardDescription className="text-slate-300">{endpoint.description}</CardDescription>
                                         </CardHeader>
                                         <CardContent>
                                             {/* Headers (optional) */}
@@ -180,23 +204,58 @@ export default function ApiDocsPage() {
                                                     {endpoint.parameters.map((param, idx) => (
                                                         <div
                                                             key={idx}
-                                                            className="flex items-center justify-between p-2 bg-slate-700/50 rounded"
+                                                            className="p-3 bg-slate-700/50 rounded"
                                                         >
-                                                            <div>
+                                                            <div className="flex items-center gap-2 mb-1">
                                                                 <code className="text-pink-400 text-sm">{param.name}</code>
-                                                                <span className="text-slate-400 text-sm ml-2">({param.type})</span>
+                                                                <span className="text-slate-400 text-sm">({param.type})</span>
                                                                 {param.required && (
-                                                                    <Badge variant="destructive" className="ml-2 text-xs">
+                                                                    <Badge variant="destructive" className="text-xs">
                                                                         Wajib
                                                                     </Badge>
                                                                 )}
                                                             </div>
-                                                            <p className="text-slate-300 text-sm">{param.description}</p>
+                                                            <p className="text-slate-300 text-sm mb-2">{param.description}</p>
+                                                            {param.example && (
+                                                                <div>
+                                                                    <span className="text-slate-400 text-xs">Contoh:</span>
+                                                                    <code className="bg-slate-600 text-green-400 px-2 py-1 rounded text-xs ml-2">
+                                                                        {param.example}
+                                                                    </code>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
                                             ) : (
                                                 <p className="text-slate-400 text-sm italic">Tidak perlu request body</p>
+                                            )}
+
+                                            {/* Request Example */}
+                                            {endpoint.requestExample && (
+                                                <div className="mt-4">
+                                                    <h5 className="text-white font-semibold mb-3">Contoh Request Body</h5>
+                                                    <div className="bg-slate-900 p-4 rounded-lg">
+                                                        <div className="text-slate-400 text-xs mb-2">Content-Type: {endpoint.requestExample.type}</div>
+                                                        <pre className="text-slate-300 text-sm overflow-x-auto">
+{Object.entries(endpoint.requestExample.fields).map(([key, value]) => 
+`${key}: ${typeof value === 'string' && value.includes('(') ? value : `"${value}"`}`
+).join('\n')}
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Response Example */}
+                                            {endpoint.responseExample && (
+                                                <div className="mt-4">
+                                                    <h5 className="text-white font-semibold mb-3">Contoh Response</h5>
+                                                    <div className="bg-slate-900 p-4 rounded-lg">
+                                                        <pre className="text-slate-300 text-sm overflow-x-auto">
+{JSON.stringify(endpoint.responseExample, null, 2)}
+                                                        </pre>
+                                                    </div>
+                                                </div>
                                             )}
                                         </CardContent>
                                     </Card>
@@ -213,14 +272,52 @@ export default function ApiDocsPage() {
                                     </CardHeader>
                                     <CardContent className="space-y-6">
                                         <div>
-                                            <h4 className="text-white font-semibold mb-3">Contoh Request ke Chatbot</h4>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <h4 className="text-white font-semibold">cURL - Pertanyaan Teks</h4>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => copyToClipboard(`curl -X 'POST' \\
+  'http://43.157.211.42:8000/api/chatbot/ask/' \\
+  -H 'accept: */*' \\
+  -H 'X-API-Key: YOUR_API_KEY_HERE' \\
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN_HERE' \\
+  -H 'Content-Type: multipart/form-data' \\
+  -F 'question=Apa itu ekspor barang?' \\
+  -F 'file='`, "curl1")}
+                                                    className="border-slate-600 text-slate-400 hover:bg-slate-700"
+                                                >
+                                                    <Copy className="h-3 w-3 mr-1" />
+                                                    {copiedText === "curl1" ? "Disalin!" : "Salin"}
+                                                </Button>
+                                            </div>
                                             <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg text-sm overflow-x-auto">
-                                                {`curl -X POST https://t.me/IndoEksporbot \\
--H "X-API-KEY: API_KEY_ANDA" \\
--H "Content-Type: application/json" \\
--d '{
-    "name": "Apa saja syarat ekspor ke Jepang?"
-}'`}
+{`curl -X 'POST' \\
+  'http://43.157.211.42:8000/api/chatbot/ask/' \\
+  -H 'accept: */*' \\
+  -H 'X-API-Key: YOUR_API_KEY_HERE' \\
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN_HERE' \\
+  -H 'Content-Type: multipart/form-data' \\
+  -F 'question=Apa itu ekspor barang?' \\
+  -F 'file='`}
+                                            </pre>
+                                        </div>
+
+                                        <div>
+                                            <h4 className="text-white font-semibold mb-3">JavaScript (Fetch API)</h4>
+                                            <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg text-sm overflow-x-auto">
+{`const formData = new FormData();
+formData.append('question', 'Apa itu ekspor barang?');
+formData.append('file', ''); // kosong jika tidak ada file
+
+const response = await fetch('http://43.157.211.42:8000/api/chatbot/ask/', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'YOUR_API_KEY_HERE',
+  },
+  body: formData
+});
+`}
                                             </pre>
                                         </div>
                                     </CardContent>
