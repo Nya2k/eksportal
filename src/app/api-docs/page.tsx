@@ -137,14 +137,17 @@ export default function ApiDocsPage() {
                                         <div>
                                             <h4 className="text-white font-semibold mb-2">Base URL</h4>
                                             <code className="bg-slate-700 text-pink-400 px-3 py-1 rounded text-sm">
-                                                http://43.157.211.42:8000
+                                                https://eksportal.my.id
                                             </code>
                                         </div>
                                         <div>
                                             <h4 className="text-white font-semibold mb-2">Autentikasi</h4>
-                                            <code className="bg-slate-700 text-slate-300 px-3 py-1 rounded text-sm block">
+                                            <code className="bg-slate-700 text-slate-300 px-3 py-1 rounded text-sm block mb-2">
                                                 X-API-KEY: API_KEY_ANDA
                                             </code>
+                                            <p className="text-slate-400 text-xs">
+                                                API menggunakan sistem proxy untuk keamanan. Request Anda akan diteruskan ke backend melalui frontend kami.
+                                            </p>
                                         </div>
                                         <div>
                                             <h4 className="text-white font-semibold mb-2">Format Respons</h4>
@@ -278,10 +281,9 @@ export default function ApiDocsPage() {
                                                     size="sm"
                                                     variant="outline"
                                                     onClick={() => copyToClipboard(`curl -X 'POST' \\
-  'http://43.157.211.42:8000/api/chatbot/ask/' \\
+  'https://eksportal.my.id/api/chatbot/ask/' \\
   -H 'accept: */*' \\
   -H 'X-API-Key: YOUR_API_KEY_HERE' \\
-  -H 'Authorization: Bearer YOUR_JWT_TOKEN_HERE' \\
   -H 'Content-Type: multipart/form-data' \\
   -F 'question=Apa itu ekspor barang?' \\
   -F 'file='`, "curl1")}
@@ -293,13 +295,42 @@ export default function ApiDocsPage() {
                                             </div>
                                             <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg text-sm overflow-x-auto">
 {`curl -X 'POST' \\
-  'http://43.157.211.42:8000/api/chatbot/ask/' \\
+  'https://eksportal.my.id/api/chatbot/ask/' \\
   -H 'accept: */*' \\
   -H 'X-API-Key: YOUR_API_KEY_HERE' \\
-  -H 'Authorization: Bearer YOUR_JWT_TOKEN_HERE' \\
   -H 'Content-Type: multipart/form-data' \\
   -F 'question=Apa itu ekspor barang?' \\
   -F 'file='`}
+                                            </pre>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <h4 className="text-white font-semibold">cURL - Pertanyaan dengan File</h4>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => copyToClipboard(`curl -X 'POST' \\
+  'https://eksportal.my.id/api/chatbot/ask/' \\
+  -H 'accept: */*' \\
+  -H 'X-API-Key: YOUR_API_KEY_HERE' \\
+  -H 'Content-Type: multipart/form-data' \\
+  -F 'question=Tolong analisis gambar ini' \\
+  -F 'file=@path/to/gambar.jpeg'`, "curl2")}
+                                                    className="border-slate-600 text-slate-500 hover:bg-slate-700 hover:text-white"
+                                                >
+                                                    <Copy className="h-3 w-3 mr-1" />
+                                                    {copiedText === "curl2" ? "Disalin!" : "Salin"}
+                                                </Button>
+                                            </div>
+                                            <pre className="bg-slate-900 text-slate-300 p-4 rounded-lg text-sm overflow-x-auto">
+{`curl -X 'POST' \\
+  'https://eksportal.my.id/api/chatbot/ask/' \\
+  -H 'accept: */*' \\
+  -H 'X-API-Key: YOUR_API_KEY_HERE' \\
+  -H 'Content-Type: multipart/form-data' \\
+  -F 'question=Tolong analisis gambar ini' \\
+  -F 'file=@path/to/gambar.jpeg'`}
                                             </pre>
                                         </div>
 
@@ -310,7 +341,7 @@ export default function ApiDocsPage() {
 formData.append('question', 'Apa itu ekspor barang?');
 formData.append('file', ''); // kosong jika tidak ada file
 
-const response = await fetch('http://43.157.211.42:8000/api/chatbot/ask/', {
+const response = await fetch('https://eksportal.my.id/api/chatbot/ask/', {
   method: 'POST',
   headers: {
     'X-API-Key': 'YOUR_API_KEY_HERE',
